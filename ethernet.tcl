@@ -139,14 +139,22 @@ proc criar-conexao {} {
 		puts -nonewline "[expr $index + $opt(swi)] ,"
 		set destination($i) [new Agent/Null]
 		$ns attach-agent $maquina($index) $destination($i)
-
-		
-		#Conecta as origens com destinos
-		for {set j 0} {$j < $opt(origins)} {incr j} {
-			$ns connect $udp($j) $destination($i)
-		}
 	}
 	puts ""
+
+		#Conecta origens com destinos
+	for {set i 0} {$i < $opt(origins)} {incr i} {
+		set index_conexao [expr $i%$opt(destinations)]
+		$ns connect $udp($i) $destination($index_conexao)
+	}
+
+# Verificar se é possível conectar todas as origens a todos os destinos. Aparentemente ele apenas manda mensagens para o último receptor conectado.
+#	for {set i 0} {$i < $opt(origins)} {incr i} {
+#		#set index_conexao [expr $i%$opt(destinations)]
+#		for {set j 0} {$j < $opt(destinations)} {incr j} {
+#			$ns connect $udp($i) $destination($j)
+#		}
+#	}
 }
 
 proc transmitir-dados {} {
