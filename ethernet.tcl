@@ -10,7 +10,9 @@ set opt(maquina)	70
 set opt(swi) 	11
 
 # Tamanho dos pacotes -- Lembrete: Achar uma forma de gerar pacotes de tamanho aleatório.
-set opt(packsize) 10000
+set opt(packsize) 1518
+
+# Obs: Pacotes Ethernet -> 64 até 1518 bytes.
 
 #Intervalo entre envio de pacotes
 set opt(tempo) 0.1
