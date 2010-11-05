@@ -1,3 +1,16 @@
+Descrição dos arquivos:
+	taxaentrega.sh : Script que coordena todas as operações necessárias, desde simulações até geração de gráficos de taxa de entrega.
+	entrega.awk: Script que calcula a média de acertos com base na saída gerada por taxaentrega.sh
+	entrega.gnu: Script que descreve como o gráfico de taxa de entrega deve ser gerado.
+	entrega.out: Média de mensagens recebidas ( 1 - taxa de erro )*100. Listadas por quantidade de mensagens por segundo usada. Pode ser comparado com entrega.png.
+	entrega.png: Gráfico gerado a partir de entrega.out. Valores únicos de 100 ou 0 são difíceis de visualizar.
+	Makefile: Contém uma regra 'clean' de limpeza.
+
+	Demais arquivos estão relacionados com os traces das simulações. São usados por scripts acima para sintetização de informações úteis.
+
+
+
+
 Saída do arquivo TR:
 
 EVENTO	TEMPO	NO_ORIGEM	NO_DESTINO	TIPO_PACOTE	TAMANHO_PACOTE	FLAGS	FID	ENDEREÇO_FONTE	ENDEREÇO_DESTINO	NUMERO_SEQUENCIA	ID_PACOTE	

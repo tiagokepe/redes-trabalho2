@@ -1,24 +1,14 @@
 # Declaração de parâmetros globais
 
-
-set opt(tr)	"out.tr"
-set opt(namtr)	"out.nam"
-
 # Número de maquinas 70
 set opt(maquina)	70
 # Número de switches 11
 set opt(swi) 	11
 
 # Tamanho dos pacotes -- Lembrete: Achar uma forma de gerar pacotes de tamanho aleatório.
-set opt(packsize) 1518
+set opt(packsize) 1000
 
 # Obs: Pacotes Ethernet -> 64 até 1518 bytes.
-
-#Intervalo entre envio de pacotes
-set opt(tempo) 0.1
-
-# Semente para número aleatório
-set opt(seed) 1200
 
 # nº de origens
 set opt(origins) 10
@@ -34,6 +24,27 @@ set opt(fim_tr) 19.9
 
 set opt(duracao) 20
 
+#Limite da fila - somente testes
+set opt(queuelimit) 2
+
+# Recebe por linha de comando a quantidade de pacotes por segundo e a semente
+if { $argc != 2} {
+     puts stderr {Uso: ns ethernet.tcl pacotes_por_segundo seed}
+     exit 1
+}
+
+# Quantidade de pacotes por segundo
+set opt(packsec) [lindex $argv 0]
+
+# Arquivos de saída
+set opt(tr)	"simulacao$opt(packsec).tr"
+set opt(namtr) "out$opt(packsec).nam"
+
+# Semente para número aleatório
+set opt(seed) [lindex $argv 1]
+
+#Intervalo entre envio de pacotes = ( 1 segundo/ número de pacotes por segundo )
+set opt(tempo) [expr 1.0/$opt(packsec)]
 ### Fim de declaração de variáveis
 
 
@@ -44,8 +55,8 @@ proc finish {} {
 	global ns opt trfd ntrfd
 	$ns flush-trace
 	close $trfd
-    close $ntrfd
-	exec nam $opt(namtr) &
+#    close $ntrfd
+	#exec nam $opt(namtr) &
 	exit 0
 }
 
@@ -83,7 +94,7 @@ proc criar-topologia {} {
 		$swi($i) shape box
 		## Liga ao switch pai
 		$ns duplex-link $swi($i) $swi(0) 1Gbps 10ms DropTail
-		$ns duplex-link-op $swi($i) $swi(0) orient right-down
+	#	$ns queue-limit $swi($i) $swi(0) $opt(queuelimit)
 	}
 
 	# Máquinas 
@@ -98,6 +109,7 @@ proc criar-topologia {} {
 		set index [expr ($i % $intermediarios )+1 ]
 		## Liga a switches intermediarios
 		$ns duplex-link $maquina($i) $swi($index) 100Mbps 10ms DropTail
+	#	$ns queue-limit $maquina($i) $swi($index) $opt(queuelimit)
 	}
 
 
@@ -178,16 +190,16 @@ proc transmitir-dados {} {
 
 ##### Main #######
 
-
 set ns [new Simulator]
+
 
 #Colore pacotes de nós da classe 1
 $ns color 1 red
 
 # Log a ser analisado
 set trfd [create-trace] 
-#Para executar no NAM
-set ntrfd [create-namtrace] 
+#Para executar no NAM - Evite executá-lo se quiser evitar longos testes.
+#set ntrfd [create-namtrace] 
 
 
 # Construção da rede
