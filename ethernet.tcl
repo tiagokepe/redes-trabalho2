@@ -17,12 +17,12 @@ set opt(origins) 10
 set opt(destinations) 2
 
 # Início e fim de transmissão de dados
-set opt(inicio_tr) 0.2
-set opt(fim_tr) 19.9
+set opt(inicio_tr) 0.5
+set opt(fim_tr) 180.5
 
 # Duração da simulacao
 
-set opt(duracao) 20
+set opt(duracao) 190
 
 #Limite da fila - somente testes
 set opt(queuelimit) 2
