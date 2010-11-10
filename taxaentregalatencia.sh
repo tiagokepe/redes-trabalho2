@@ -26,9 +26,10 @@ for i in 1 10 100 1000 10000
 		for j in $( seq 1 3 )
 			do
 				ns ethernet.tcl $i $RANDOM
-				taxa_entrega=$( cat simulacao$i.tr | cut -d " " -f 1,12 |  uniq | awk -f entrega.awk)
-				latencia=$( cat simulacao$i.tr | awk -f latencia.awk )
-				media_entrega=$( echo "scale=10; $media_entrega + $taxa_entrega " | bc )
+				taxa_entrega=$( cat /dev/shm/simulacao$i.tr | cut -d " " -f 1,12 |  uniq | awk -f entrega.awk)
+#Deu pau na memória				latencia=$( cat /dev/shm/simulacao$i.tr | awk -f latencia.awk )
+   				latencia=$( ruby latencia.rb /dev/shm/simulacao$i.tr )
+				media_entrega=$( echo "scale=10; $media_entrega + $taxa_entrega " | bc )			
 				media_latencia=$( echo "scale=10; $media_latencia + $latencia " | bc )
 			done
 		

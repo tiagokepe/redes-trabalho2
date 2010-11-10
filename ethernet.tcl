@@ -17,8 +17,8 @@ set opt(origins) 10
 set opt(destinations) 2
 
 # Início e fim de transmissão de dados
-set opt(inicio_tr) 0.5
-set opt(fim_tr) 180.5
+set opt(inicio_tr) 1.5
+set opt(fim_tr) 181.5
 
 # Duração da simulacao
 
@@ -37,8 +37,8 @@ if { $argc != 2} {
 set opt(packsec) [lindex $argv 0]
 
 # Arquivos de saída
-set opt(tr)	"simulacao$opt(packsec).tr"
-set opt(namtr) "out$opt(packsec).nam"
+set opt(tr)	"/dev/shm/simulacao$opt(packsec).tr"
+set opt(namtr) "/dev/shm/out$opt(packsec).nam"
 
 # Semente para número aleatório
 set opt(seed) [lindex $argv 1]
