@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define CONST_INI 64
+#define CONST_INI 1000000
 
 
 int main(int argc, char *argv[])
@@ -31,12 +31,12 @@ int main(int argc, char *argv[])
 	{
 		fscanf(fp," %c %lf %*[^ ] %d %*[^ ] %*[^ ] %*[^ ] %*[^ ] %*[^ ] %f %*[^ ] %lld",&symb,&time,&no_chegada,&destino2,&id); /* Leitura de uma linha do arquivo trace. */
 		destino = ( int  ) destino2;
-		printf("simbolo: %c time: %lf no_chegada: %d destino: %d id: %lld\n",symb,time, no_chegada, destino,id);
+//		printf("simbolo: %c time: %lf no_chegada: %d destino: %d id: %lld\n",symb,time, no_chegada, destino,id);
 		
 		if ( id > ( size -1 ) ) /* Realocacao de memoria. */
 		{
-			enviadas = ( double * ) realloc(&enviadas, sizeof(double) * ( 2 * size ) );
-			recebidas = ( double * ) realloc(&recebidas, sizeof(double) * ( 2 * size ) );
+			enviadas = ( double * ) realloc(enviadas, sizeof(double) * ( 2 * size ) );
+			recebidas = ( double * ) realloc(recebidas, sizeof(double) * ( 2 * size ) );
 			size*=2;
 			if ( !enviadas || !recebidas ) return -2;
 		}
