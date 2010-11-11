@@ -1,0 +1,74 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[latin1]{inputenc}
+\usepackage[brazil]{babel}
+\usepackage[pdftex]{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{textcomp}
+\usepackage{float}
+
+% Title Page
+\title{Simulação de uma rede Ethernet - Trabalho 2 de redes}
+\author{Antonio Carlos Salzvedel Furtado Junior e Tiago Rodrigo Kepe}
+
+
+\begin{document}
+\maketitle
+\section{A simulação}
+
+Nosso trabalho começou com a criação do script ethernet.tcl, que deve ser executado pelo programa NS. Este scipt receberá dois parâmetros da linha de comando, o primeiro deles é uma semente para o gerador de números aleatórios. Nós usamos a aleatoridade para escolher entre as 70 máquinas disponíveis 10 origens e 2 destinos. Esta escolha pode estar intercalada, ou seja, um destino pode também ser uma origem.
+
+O segundo parâmetro é o número de mensagens por segundo. Como usamos o gerador de tráfego presente no NS2, chamado CBR, este parâmetro serve para definir o intervalo entre o envio de mensagens. Por exemplo, para um número de mensagens igual a 100, o intervalo seria:
+\[
+      mensagens \rightarrow 100
+\]
+\[
+      intervalo = 1/100\quad segundos
+\]
+Detalhes sobre a rede foram todos definidos como constantes internas, eles estão inclusos em um array chamado \textbf(opt). Algumas constantes foram definidas de acordo com a especificação do trabalho, outras de acordo com o comportamento esperado do ns. Elas podem ser facilmente modificadas. Aqui estão as principais:
+\begin{itemize}
+ \item Duração do envio de pacotes \textrightarrow entre 1.5 e 181.5 segundos = 180 segundos
+ \item Número de máquinas \textrightarrow 70
+ \item Número de switches \textrightarrow 11
+ \item Tamanho dos pacotes \textrightarrow 1000
+ \item Número de origens \textrightarrow 10
+ \item Número de destinos \textrightarrow 2
+\end{itemize}
+
+Os links entre máquinas e switches e entre os switches intermediários e o pai são todos duais, e seguem especificaçãoes de topologia e velocidade.
+
+\subsection{Conexões}
+
+Depois de esolhermos aleatoriamente máquinas origens e destinos, conectamos metade das origens a um destino, e a outra metade a outro destino, de tal forma que as origens só enviarão pacotes aos destinos selecionados. Como a escolha foi aleatória, não há nenhum problema.
+
+\section{Análise e geração de gráficos}
+
+Com base no arquivo de trace gerado pelo NS2 (/dev/shm/simulacao<mensagens por segundo>.tr), dois scripts para análise de dados foram feitos. O primeiro deles é o entrega.awk, reponsável por gerar a taxa de entrega. Ele recebe apenas o tipo de evento ( enfila, drop, etc. ) e a ID da mensagem. Fazemos também com que ele receba apenas linhas únicas de entrada. 
+
+Se o entrega.awk receber da entrada um evento de enfilamento (+), então ele incrementa o número de mensagens enviadas. Caso a mensagem seja um drop (d), incrementamos o número de mensagens perdidas. Se dividirmos o número de mensagens perdidas pelo número de enviadas, obtemos a taxa de erro, como o inverso da taxa de erros é a taxa de acertos, então:
+\begin{align*}
+ &e \leftarrow enviadas \\
+ &d \leftarrow perdidas \\
+ &acertos \leftarrow 1 - ( e / d )
+\end{align*}
+
+Como as linhas de entrada são únicas, contamos apenas a primeira vez que a mensagem foi enfilada na origem. O entrega.awk retornará a taxa de acertos em porcentagem ao final.
+
+O segundo script criado foi o latencia.c, reponsável pelo retorno da latência média. Como neste caso precisamos saber o o tempo de envio e chegada de cada mensagem, identicada pelo campo id, foi demandada mais memória. Utilizamos dois vetores, um para guardar os tempos de envio e outro para os tempos de chegada de cada mensagem. O tempo de envio é o tempo do primeiro enfilamento da mensagem com determinado ID. O tempo de recebimento é tempo do evento recebe quando o destino da mensagem é igual ao nó de chegada, assim evitamos contar o recebimento em hubs. É feita então uma média da diferença de todos os tempos e retornada.
+
+Eram necessárias várias simulações, três para cada taxa de mensagens por segundo (1,10,100,1000,10000). Criamos o script taxaentregalatencia.sh para lidar com isso. Para cada taxa acima, ele vai executar nossos outros scripts 3 vezes, vai então calcular as médias destas saídas e deve concatenar estes resultados para dois arquivos, o entrega.out e o latencia.out. O entrega.out contém as taxas de envio e as médias de entrega, o latencia.out é semelhante, só que contém as médias de latência.
+
+A última tarefa do Shell Script criado é executar outros dois scripts do GNUPlot, o entrega.gnu e o latencia.gnu. Com base nos arquivos de saída mencionados ele gerará gráficos de taxa de entrega e latência no formato PNG. Os gráficos são incluídos neste relatório.
+
+\section{Modo de execução}
+
+./taxaentregalatencia
+
+\section{Gráficos}
+\begin{figure}[H]
+   \includegraphics[scale=0.5]{entrega.png}
+\end{figure}
+\begin{figure}[H]
+  \includegraphics[scale=0.5]{latencia.png}
+\end{figure}
+
+\end{document}          
